@@ -1,0 +1,3490 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ระบบติดตามงบประมาณ ศปป.4 กอ.รมน. ปี 2569</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg:        #0f1923;
+  --surface:   #16202c;
+  --surface2:  #1d2d3e;
+  --border:    #243447;
+  --text:      #cdd9e5;
+  --muted:     #768390;
+  --gold:      #e3b341;
+  --green:     #3fb950;
+  --blue:      #58a6ff;
+  --red:       #f85149;
+  --orange:    #f0883e;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Sarabun', sans-serif;
+  font-size: 15px;
+  line-height: 1.6;
+  padding: 32px 24px 60px;
+}
+
+/* ── header ── */
+.page-header {
+  max-width: 1100px; margin: 0 auto 36px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 20px;
+}
+.org-tag {
+  font-size: 12px; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 8px;
+}
+.page-title {
+  font-size: 22px; font-weight: 700; color: #e6edf3;
+  line-height: 1.35;
+}
+.page-title span { color: var(--gold); }
+
+/* ── grand total cards ── */
+.kpi-row {
+  max-width: 1100px; margin: 0 auto 36px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 14px;
+}
+.kpi {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px 20px;
+}
+.kpi-label { font-size: 12px; color: var(--muted); margin-bottom: 6px; }
+.kpi-value {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 22px; font-weight: 500;
+}
+.kpi-unit { font-size: 12px; color: var(--muted); margin-left: 4px; }
+.kpi.gold   .kpi-value { color: var(--gold); }
+.kpi.green  .kpi-value { color: var(--green); }
+.kpi.red    .kpi-value { color: var(--red); }
+.kpi.blue   .kpi-value { color: var(--blue); }
+
+/* ── section ── */
+.section {
+  max-width: 1100px; margin: 0 auto 40px;
+}
+.section-title {
+  font-size: 13px; font-weight: 600;
+  letter-spacing: .08em; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 16px;
+}
+
+/* ── work card ── */
+.work-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  margin-bottom: 20px;
+  overflow: hidden;
+}
+
+.work-header {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  gap: 16px; padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+.work-meta { flex: 1; min-width: 0; }
+.work-no-badge {
+  display: inline-block;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px; font-weight: 500;
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 4px; padding: 2px 8px;
+  color: var(--blue); margin-bottom: 6px;
+}
+.work-name { font-size: 15px; font-weight: 600; color: #e6edf3; }
+.activity-name { font-size: 13px; color: var(--muted); margin-top: 2px; }
+
+.work-stats {
+  display: flex; gap: 24px; flex-wrap: wrap;
+  align-items: flex-start; padding-top: 2px;
+}
+.stat { text-align: right; }
+.stat-label { font-size: 11px; color: var(--muted); }
+.stat-value {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 15px; font-weight: 500;
+}
+.stat-value.gold   { color: var(--gold); }
+.stat-value.green  { color: var(--green); }
+.stat-value.red    { color: var(--red); }
+.stat-value.blue   { color: var(--blue); }
+
+/* progress bar */
+.progress-wrap {
+  padding: 10px 20px 14px;
+  border-bottom: 1px solid var(--border);
+}
+.progress-labels {
+  display: flex; justify-content: space-between;
+  font-size: 11px; color: var(--muted); margin-bottom: 5px;
+}
+.progress-bar-bg {
+  height: 6px; background: var(--border); border-radius: 3px; overflow: hidden;
+}
+.progress-bar-fill {
+  height: 100%; border-radius: 3px;
+  background: linear-gradient(90deg, var(--green), #2ea043);
+  transition: width .4s ease;
+}
+
+/* ── trip table ── */
+.trip-table-wrap {
+  overflow-x: auto;
+}
+table {
+  width: 100%; border-collapse: collapse;
+  font-size: 13px;
+}
+thead th {
+  background: var(--surface2);
+  color: var(--muted); font-weight: 500;
+  font-size: 11px; letter-spacing: .06em; text-transform: uppercase;
+  padding: 8px 14px; text-align: right;
+  border-bottom: 1px solid var(--border);
+}
+thead th:first-child { text-align: center; }
+tbody tr { border-bottom: 1px solid var(--border); }
+tbody tr:last-child { border-bottom: none; }
+tbody tr:hover { background: var(--surface2); }
+tbody td {
+  padding: 7px 14px; text-align: right;
+  font-family: 'IBM Plex Mono', monospace; font-size: 12px;
+}
+tbody td:first-child {
+  text-align: center;
+  font-size: 11px; color: var(--muted);
+}
+.status-done {
+  display: inline-block;
+  background: #3fb95018; border: 1px solid #3fb95040;
+  color: var(--green); border-radius: 4px;
+  padding: 1px 7px; font-size: 10px;
+  font-family: 'Sarabun', sans-serif;
+}
+.status-pending {
+  display: inline-block;
+  background: #768390; border: 1px solid #768390;
+  opacity: .35;
+  color: #0f1923; border-radius: 4px;
+  padding: 1px 7px; font-size: 10px;
+  font-family: 'Sarabun', sans-serif;
+}
+.zero { color: var(--border); }
+.pos  { color: var(--green); }
+.neg  { color: var(--red); }
+
+/* return box */
+.return-box {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 20px;
+  background: #f8514910; border-top: 1px solid #f8514930;
+  flex-wrap: wrap; gap: 8px;
+}
+.return-label { font-size: 13px; color: var(--red); font-weight: 500; }
+.return-value {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 18px; font-weight: 600; color: var(--red);
+}
+
+/* grand return */
+.grand-return {
+  max-width: 1100px; margin: 0 auto;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-top: 3px solid var(--red);
+  border-radius: 10px;
+  padding: 24px 28px;
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 16px;
+}
+.grand-return-label { font-size: 16px; font-weight: 600; color: #e6edf3; }
+.grand-return-label span { color: var(--red); }
+.grand-return-value {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 30px; font-weight: 700; color: var(--red);
+}
+.grand-return-unit { font-size: 14px; color: var(--muted); margin-left: 6px; }
+
+.footer {
+  max-width: 1100px; margin: 32px auto 0;
+  font-size: 12px; color: var(--border);
+  text-align: right;
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  body { padding: 16px 12px 48px; font-size: 14px; }
+
+  .page-title { font-size: 17px; }
+
+  .kpi-row {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+  .kpi-value { font-size: 18px; }
+
+  .work-header { flex-direction: column; gap: 12px; }
+  .work-stats { justify-content: flex-start; gap: 16px; }
+  .stat { text-align: left; }
+
+  .return-box { flex-direction: column; gap: 4px; }
+  .return-value { font-size: 15px; }
+
+  .grand-return { flex-direction: column; gap: 12px; }
+  .grand-return-value { font-size: 22px; }
+  .grand-return-label { font-size: 14px; }
+
+  table { font-size: 11px; }
+  thead th { padding: 6px 8px; font-size: 10px; }
+  tbody td { padding: 5px 8px; }
+
+  tfoot td { padding: 6px 8px; font-size: 12px; }
+}
+
+@media (max-width: 480px) {
+  .kpi-row { grid-template-columns: 1fr 1fr; }
+  .kpi-value { font-size: 16px; }
+  .page-title { font-size: 15px; }
+  .work-stats { gap: 12px; }
+  .stat-value { font-size: 13px; }
+}
+
+
+.badge-new {
+  display: inline-block;
+  background: #f0883e22; border: 1px solid #f0883e60;
+  color: #f0883e; border-radius: 4px;
+  padding: 1px 6px; font-size: 10px; font-weight: 700;
+  font-family: 'IBM Plex Mono', monospace;
+  margin-left: 6px; vertical-align: middle;
+  animation: pulse 1.5s infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="page-header">
+  <div class="org-tag">Internal Security Operations Command — ศปป.4 กอ.รมน.</div>
+  <div class="page-title">
+    ระบบติดตามงบประมาณจากการออกชุดปฏิบัติการตรวจและติดตาม<br>
+    ของ ศปป.4 กอ.รมน. <span>ปีงบประมาณ 2569</span>
+  </div>
+</div>
+
+<!-- KPI CARDS -->
+<div class="kpi-row">
+  <div class="kpi gold">
+    <div class="kpi-label">งบประมาณที่ได้รับจัดสรรรวม</div>
+    <div class="kpi-value">3,861,930<span class="kpi-unit">บาท</span></div>
+  </div>
+  <div class="kpi green">
+    <div class="kpi-label">เบิกจ่ายแล้ว</div>
+    <div class="kpi-value">1,292,276<span class="kpi-unit">บาท</span></div>
+  </div>
+  <div class="kpi blue">
+    <div class="kpi-label">ทริปที่ดำเนินการแล้ว</div>
+    <div class="kpi-value">32<span class="kpi-unit">/ 94 ครั้ง</span></div>
+  </div>
+  <div class="kpi red">
+    <div class="kpi-label">งบประมาณที่ต้องคืนรวม</div>
+    <div class="kpi-value">2,476,764<span class="kpi-unit">บาท</span></div>
+  </div>
+</div>
+
+<!-- PER WORK SECTION -->
+<div class="section">
+  <div class="section-title">รายละเอียดแต่ละงาน</div>
+
+  
+  
+  
+
+  <div class="work-card">
+
+    <!-- header -->
+    <div class="work-header">
+      <div class="work-meta">
+        <div class="work-no-badge">งานที่ 1</div>
+        <div class="work-name">งานการป้องกันและบรรเทาสาธารณภัย</div>
+        <div class="activity-name">กิจกรรมเตรียมการป้องกันและบรรเทาสาธารณภัยด้วยกลไกความมั่นคง</div>
+      </div>
+      <div class="work-stats">
+        <div class="stat">
+          <div class="stat-label">งบจัดสรร</div>
+          <div class="stat-value gold">133,220</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">เบิกจ่ายแล้ว</div>
+          <div class="stat-value green">114,708</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">วัสดุ</div>
+          <div class="stat-value blue">13,020</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">ครั้งที่ดำเนินการ</div>
+          <div class="stat-value">4/4</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- progress -->
+    <div class="progress-wrap">
+      <div class="progress-labels">
+        <span>ความคืบหน้าการเดินทาง</span>
+        <span>100%</span>
+      </div>
+      <div class="progress-bar-bg">
+        <div class="progress-bar-fill" style="width: 100.0%"></div>
+      </div>
+    </div>
+
+    <!-- trip table -->
+    <div class="trip-table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>ครั้งที่</th>
+            <th>งบจัดสรรต่อครั้ง (บาท)</th>
+            <th>งบแผน (บาท)</th>
+            <th>จ่ายจริง (บาท)</th>
+            <th>จัดสรร − แผน (บาท)</th>
+            <th>แผน − จ่ายจริง (บาท)</th>
+            <th>สถานะ</th>
+          </tr>
+        </thead>
+        <tbody>
+          
+          
+          
+          <tr>
+            <td>
+              1
+              
+            </td>
+            <td>30,050</td>
+            <td>28,886</td>
+            <td>28,486</td>
+            <td>
+              
+                
+                <span class="pos">1,164</span>
+                
+              
+            </td>
+            <td>
+              
+                
+                <span class="pos">400</span>
+                
+              
+            </td>
+            <td>
+              
+                <span class="status-done">เสร็จแล้ว</span>
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td>
+              2
+              
+            </td>
+            <td>30,050</td>
+            <td>29,394</td>
+            <td>29,094</td>
+            <td>
+              
+                
+                <span class="pos">656</span>
+                
+              
+            </td>
+            <td>
+              
+                
+                <span class="pos">300</span>
+                
+              
+            </td>
+            <td>
+              
+                <span class="status-done">เสร็จแล้ว</span>
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td>
+              3
+              
+            </td>
+            <td>30,050</td>
+            <td>29,534</td>
+            <td>29,134</td>
+            <td>
+              
+                
+                <span class="pos">516</span>
+                
+              
+            </td>
+            <td>
+              
+                
+                <span class="pos">400</span>
+                
+              
+            </td>
+            <td>
+              
+                <span class="status-done">เสร็จแล้ว</span>
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td>
+              4
+              
+            </td>
+            <td>30,050</td>
+            <td>28,294</td>
+            <td>27,994</td>
+            <td>
+              
+                
+                <span class="pos">1,756</span>
+                
+              
+            </td>
+            <td>
+              
+                
+                <span class="pos">300</span>
+                
+              
+            </td>
+            <td>
+              
+                <span class="status-done">เสร็จแล้ว</span>
+              
+            </td>
+          </tr>
+          
+        </tbody>
+        <tfoot>
+          <tr style="border-top:2px solid var(--border);background:var(--surface2);">
+            <td colspan="4" style="text-align:right;padding:8px 14px;font-size:12px;color:var(--muted);font-family:'Sarabun',sans-serif;font-weight:600;">
+              รวมส่วนต่าง จัดสรร − แผน (ยอดส่งคืน)
+            </td>
+            <td style="padding:8px 14px;font-family:'IBM Plex Mono',monospace;font-size:14px;font-weight:600;">
+              <span class="pos">4,092</span>
+              
+            </td>
+            <td colspan="2"></td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+
+    <!-- return -->
+    <div class="return-box">
+      <div class="return-label">งบประมาณที่ต้องคืน (งานที่ 1)</div>
+      <div class="return-value">5,492 <span style="font-size:13px;font-weight:400">บาท</span></div>
+    </div>
+
+  </div>
+  
+  
+  
+
+  <div class="work-card">
+
+    <!-- header -->
+    <div class="work-header">
+      <div class="work-meta">
+        <div class="work-no-badge">งานที่ 2</div>
+        <div class="work-name">งานการเสริมสร้างความั่นคงด้านทรัพยากรธรรมชาติ</div>
+        <div class="activity-name">กิจกรรมเพิ่มประสิทธิภาพการเสริมสร้างความมั่นคงด้านทรัพยากรธรรมชาติ</div>
+      </div>
+      <div class="work-stats">
+        <div class="stat">
+          <div class="stat-label">งบจัดสรร</div>
+          <div class="stat-value gold">1,607,600</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">เบิกจ่ายแล้ว</div>
+          <div class="stat-value green">606,376</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">วัสดุ</div>
+          <div class="stat-value blue">26,000</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">ครั้งที่ดำเนินการ</div>
+          <div class="stat-value">12/30</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- progress -->
+    <div class="progress-wrap">
+      <div class="progress-labels">
+        <span>ความคืบหน้าการเดินทาง</span>
+        <span>40%</span>
+      </div>
+      <div class="progress-bar-bg">
+        <div class="progress-bar-fill" style="width: 40.0%"></div>
+      </div>
+    </div>
+
+    <!-- trip table -->
+    <div class="trip-table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>ครั้งที่</th>
+            <th>งบจัดสรรต่อครั้ง (บาท)</th>
+            <th>งบแผน (บาท)</th>
+            <th>จ่ายจริง (บาท)</th>
+            <th>จัดสรร − แผน (บาท)</th>
+            <th>แผน − จ่ายจริง (บาท)</th>
+            <th>สถานะ</th>
+          </tr>
+        </thead>
+        <tbody>
+          
+          
+          
+          <tr>
+            <td>
+              1
+              
+            </td>
+            <td>52,720</td>
+            <td>51,020</td>
+            <td>50,620</td>
+            <td>
+              
+                
+                <span class="pos">1,700</span>
+                
+              
+            </td>
+            <td>
+              
+                
+                <span class="pos">400</span>
+                
+              
+            </td>
+            <td>
+              
+                <span class="status-done">เสร็จแล้ว</span>
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td>
+              2
+              
+            </td>
+            <td>52,720</td>
+            <td>51,492</td>
+            <td>51,092</td>
+            <td>
+              
+                
+                <span class="pos">1,228</span>
+                
+              
+            </td>
+            <td>
+              
+                
+                <span class="pos">400</span>
+                
+              
+            </td>
+            <td>
+              
+                <span class="status-done">เสร็จแล้ว</span>
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td>
+              3
+              
+            </td>
+            <td>52,720</td>
+            <td>51,284</td>
+            <td>50,884</td>
+            <td>
+              
+                
+                <span class="pos">1,436</span>
+                
+              
+            </td>
+            <td>
+              
+                
+                <span class="pos">400</span>
+                
+              
+            </td>
+            <td>
+              
+                <span class="status-done">เสร็จแล้ว</span>
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td>
+              4
+              
+            </td>
+            <td>52,720</td>
+            <td>52,528</td>
+            <td>52,128</td>
+            <td>
+              
+                
+                <span class="pos">192</span>
+                
+              
+            </td>
+            <td>
+              
+                
+                <span class="pos">400</span>
+                
+              
+            </td>
+            <td>
+              
+                <span class="status-done">เสร็จแล้ว</span>
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td>
+              5
+              
+            </td>
+            <td>52,720</td>
+            <td>51,476</td>
+            <td>51,076</td>
+            <td>
+              
+                
+                <span class="pos">1,244</span>
+                
+              
+            </td>
+            <td>
+              
+                
+                <span class="pos">400</span>
+                
+              
+            </td>
+            <td>
+              
+                <span class="status-done">เสร็จแล้ว</span>
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td>
+              6
+              
+            </td>
+            <td>52,720</td>
+            <td>52,648</td>
+            <td>52,248</td>
+            <td>
+              
+                
+                <span class="pos">72</span>
+                
+              
+            </td>
+            <td>
+              
+                
+                <span class="pos">400</span>
+                
+              
+            </td>
+            <td>
+              
+                <span class="status-done">เสร็จแล้ว</span>
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td>
+              7
+              
+            </td>
+            <td>52,720</td>
+            <td>51,912</td>
+            <td>51,512</td>
+            <td>
+              
+                
+                <span class="pos">808</span>
+                
+              
+            </td>
+            <td>
+              
+                
+                <span class="pos">400</span>
+                
+              
+            </td>
+            <td>
+              
+                <span class="status-done">เสร็จแล้ว</span>
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td>
+              8
+              
+            </td>
+            <td>52,720</td>
+            <td>50,416</td>
+            <td>50,016</td>
+            <td>
+              
+                
+                <span class="pos">2,304</span>
+                
+              
+            </td>
+            <td>
+              
+                
+                <span class="pos">400</span>
+                
+              
+            </td>
+            <td>
+              
+                <span class="status-done">เสร็จแล้ว</span>
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td>
+              9
+              
+            </td>
+            <td>52,720</td>
+            <td>51,672</td>
+            <td>51,272</td>
+            <td>
+              
+                
+                <span class="pos">1,048</span>
+                
+              
+            </td>
+            <td>
+              
+                
+                <span class="pos">400</span>
+                
+              
+            </td>
+            <td>
+              
+                <span class="status-done">เสร็จแล้ว</span>
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td>
+              10
+              
+            </td>
+            <td>52,720</td>
+            <td>52,648</td>
+            <td>52,248</td>
+            <td>
+              
+                
+                <span class="pos">72</span>
+                
+              
+            </td>
+            <td>
+              
+                
+                <span class="pos">400</span>
+                
+              
+            </td>
+            <td>
+              
+                <span class="status-done">เสร็จแล้ว</span>
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td>
+              11
+              
+            </td>
+            <td>52,720</td>
+            <td>52,055</td>
+            <td>46,456</td>
+            <td>
+              
+                
+                <span class="pos">665</span>
+                
+              
+            </td>
+            <td>
+              
+                
+                <span class="pos">5,599</span>
+                
+              
+            </td>
+            <td>
+              
+                <span class="status-done">เสร็จแล้ว</span>
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td>
+              12
+              
+            </td>
+            <td>52,720</td>
+            <td>52,641</td>
+            <td>46,824</td>
+            <td>
+              
+                
+                <span class="pos">79</span>
+                
+              
+            </td>
+            <td>
+              
+                
+                <span class="pos">5,817</span>
+                
+              
+            </td>
+            <td>
+              
+                <span class="status-done">เสร็จแล้ว</span>
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td>
+              13
+              
+            </td>
+            <td>52,720</td>
+            <td>51,236</td>
+            <td><span class="zero">—</span></td>
+            <td>
+              
+                
+                <span class="pos">1,484</span>
+                
+              
+            </td>
+            <td>
+              
+                
+                <span class="pos">51,236</span>
+                
+              
+            </td>
+            <td>
+              
+                <span class="status-pending">รอดำเนินการ</span>
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td>
+              14
+              
+            </td>
+            <td>52,720</td>
+            <td>52,594</td>
+            <td><span class="zero">—</span></td>
+            <td>
+              
+                
+                <span class="pos">126</span>
+                
+              
+            </td>
+            <td>
+              
+                
+                <span class="pos">52,594</span>
+                
+              
+            </td>
+            <td>
+              
+                <span class="status-pending">รอดำเนินการ</span>
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td>
+              15
+              
+            </td>
+            <td>52,720</td>
+            <td>52,332</td>
+            <td><span class="zero">—</span></td>
+            <td>
+              
+                
+                <span class="pos">388</span>
+                
+              
+            </td>
+            <td>
+              
+                
+                <span class="pos">52,332</span>
+                
+              
+            </td>
+            <td>
+              
+                <span class="status-pending">รอดำเนินการ</span>
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td>
+              16
+              
+            </td>
+            <td>52,720</td>
+            <td>52,717</td>
+            <td><span class="zero">—</span></td>
+            <td>
+              
+                
+                <span class="pos">3</span>
+                
+              
+            </td>
+            <td>
+              
+                
+                <span class="pos">52,717</span>
+                
+              
+            </td>
+            <td>
+              
+                <span class="status-pending">รอดำเนินการ</span>
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td>
+              17
+              
+            </td>
+            <td>52,720</td>
+            <td><span class="zero">—</span></td>
+            <td><span class="zero">—</span></td>
+            <td>
+              
+                <span class="zero">—</span>
+              
+            </td>
+            <td>
+              
+                <span class="zero">—</span>
+              
+            </td>
+            <td>
+              
+                <span class="status-pending">รอดำเนินการ</span>
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td>
+              18
+              
+            </td>
+            <td>52,720</td>
+            <td><span class="zero">—</span></td>
+            <td><span class="zero">—</span></td>
+            <td>
+              
+                <span class="zero">—</span>
+              
+            </td>
+            <td>
+              
+                <span class="zero">—</span>
+              
+            </td>
+            <td>
+              
+                <span class="status-pending">รอดำเนินการ</span>
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td>
+              19
+              
+            </td>
+            <td>52,720</td>
+            <td><span class="zero">—</span></td>
+            <td><span class="zero">—</span></td>
+            <td>
+              
+                <span class="zero">—</span>
+              
+            </td>
+            <td>
+              
+                <span class="zero">—</span>
+              
+            </td>
+            <td>
+              
+                <span class="status-pending">รอดำเนินการ</span>
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td>
+              20
+              
+            </td>
+            <td>52,720</td>
+            <td><span class="zero">—</span></td>
+            <td><span class="zero">—</span></td>
+            <td>
+              
+                <span class="zero">—</span>
+              
+            </td>
+            <td>
+              
+                <span class="zero">—</span>
+              
+            </td>
+            <td>
+              
+                <span class="status-pending">รอดำเนินการ</span>
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td>
+              21
+              
+            </td>
+            <td>52,720</td>
+            <td><span class="zero">—</span></td>
+            <td><span class="zero">—</span></td>
+            <td>
+              
+                <span class="zero">—</span>
+              
+            </td>
+            <td>
+              
+                <span class="zero">—</span>
+              
+            </td>
+            <td>
+              
+                <span class="status-pending">รอดำเนินการ</span>
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td>
+              22
+              
+            </td>
+            <td>52,720</td>
+            <td><span class="zero">—</span></td>
+            <td><span class="zero">—</span></td>
+            <td>
+              
+                <span class="zero">—</span>
+              
+            </td>
+            <td>
+              
+                <span class="zero">—</span>
+              
+            </td>
+            <td>
+              
+                <span class="status-pending">รอดำเนินการ</span>
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td>
+              23
+              
+            </td>
+            <td>52,720</td>
+            <td><span class="zero">—</span></td>
+            <td><span class="zero">—</span></td>
+            <td>
+              
+                <span class="zero">—</span>
+              
+            </td>
+            <td>
+              
+                <span class="zero">—</span>
+              
+            </td>
+            <td>
+              
+                <span class="status-pending">รอดำเนินการ</span>
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td>
+              24
+              
+            </td>
+            <td>52,720</td>
+            <td><span class="zero">—</span></td>
+            <td><span class="zero">—</span></td>
+            <td>
+              
+                <span class="zero">—</span>
+              
+            </td>
+            <td>
+              
+                <span class="zero">—</span>
+              
+            </td>
+            <td>
+              
+                <span class="status-pending">รอดำเนินการ</span>
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td>
+              25
+              
+            </td>
+            <td>52,720</td>
+            <td><span class="zero">—</span></td>
+            <td><span class="zero">—</span></td>
+            <td>
+              
+                <span class="zero">—</span>
+              
+            </td>
+            <td>
+              
+                <span class="zero">—</span>
+              
+            </td>
+            <td>
+              
+                <span class="status-pending">รอดำเนินการ</span>
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td>
+              26
+              
+            </td>
+            <td>52,720</td>
+            <td><span class="zero">—</span></td>
+            <td><span class="zero">—</span></td>
+            <td>
+              
+                <span class="zero">—</span>
+              
+            </td>
+            <td>
+              
+                <span class="zero">—</span>
+              
+            </td>
+            <td>
+              
+                <span class="status-pending">รอดำเนินการ</span>
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td>
+              27
+              
+            </td>
+            <td>52,720</td>
+            <td><span class="zero">—</span></td>
+            <td><span class="zero">—</span></td>
+            <td>
+              
+                <span class="zero">—</span>
+              
+            </td>
+            <td>
+              
+                <span class="zero">—</span>
+              
+            </td>
+            <td>
+              
+                <span class="status-pending">รอดำเนินการ</span>
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td>
+              28
+              
+            </td>
+            <td>52,720</td>
+            <td><span class="zero">—</span></td>
+            <td><span class="zero">—</span></td>
+            <td>
+              
+                <span class="zero">—</span>
+              
+            </td>
+            <td>
+              
+                <span class="zero">—</span>
+              
+            </td>
+            <td>
+              
+                <span class="status-pending">รอดำเนินการ</span>
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td>
+              29
+              
+            </td>
+            <td>52,720</td>
+            <td><span class="zero">—</span></td>
+            <td><span class="zero">—</span></td>
+            <td>
+              
+                <span class="zero">—</span>
+              
+            </td>
+            <td>
+              
+                <span class="zero">—</span>
+              
+            </td>
+            <td>
+              
+                <span class="status-pending">รอดำเนินการ</span>
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td>
+              30
+              
+            </td>
+            <td>52,720</td>
+            <td><span class="zero">—</span></td>
+            <td><span class="zero">—</span></td>
+            <td>
+              
+                <span class="zero">—</span>
+              
+            </td>
+            <td>
+              
+                <span class="zero">—</span>
+              
+            </td>
+            <td>
+              
+                <span class="status-pending">รอดำเนินการ</span>
+              
+            </td>
+          </tr>
+          
+        </tbody>
+        <tfoot>
+          <tr style="border-top:2px solid var(--border);background:var(--surface2);">
+            <td colspan="4" style="text-align:right;padding:8px 14px;font-size:12px;color:var(--muted);font-family:'Sarabun',sans-serif;font-weight:600;">
+              รวมส่วนต่าง จัดสรร − แผน (ยอดส่งคืน)
+            </td>
+            <td style="padding:8px 14px;font-family:'IBM Plex Mono',monospace;font-size:14px;font-weight:600;">
+              <span class="pos">12,849</span>
+              
+            </td>
+            <td colspan="2"></td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+
+    <!-- return -->
+    <div class="return-box">
+      <div class="return-label">งบประมาณที่ต้องคืน (งานที่ 2)</div>
+      <div class="return-value">975,224 <span style="font-size:13px;font-weight:400">บาท</span></div>
+    </div>
+
+  </div>
+  
+  
+  
+
+  <div class="work-card">
+
+    <!-- header -->
+    <div class="work-header">
+      <div class="work-meta">
+        <div class="work-no-badge">งานที่ 3</div>
+        <div class="work-name">งานการเสริมสร้างความั่นคงด้านทรัพยากรธรรมชาติ</div>
+        <div class="activity-name">กิจกรรมประเมินผลการปฏิบัติงานในการเสริมสร้างความมั่นคงด้านทรัพยากรธรรมชาติ</div>
+      </div>
+      <div class="work-stats">
+        <div class="stat">
+          <div class="stat-label">งบจัดสรร</div>
+          <div class="stat-value gold">1,646,640</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">เบิกจ่ายแล้ว</div>
+          <div class="stat-value green">571,192</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">วัสดุ</div>
+          <div class="stat-value blue">21,720</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">ครั้งที่ดำเนินการ</div>
+          <div class="stat-value">16/44</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- progress -->
+    <div class="progress-wrap">
+      <div class="progress-labels">
+        <span>ความคืบหน้าการเดินทาง</span>
+        <span>36%</span>
+      </div>
+      <div class="progress-bar-bg">
+        <div class="progress-bar-fill" style="width: 36.36363636363637%"></div>
+      </div>
+    </div>
+
+    <!-- trip table -->
+    <div class="trip-table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>ครั้งที่</th>
+            <th>งบจัดสรรต่อครั้ง (บาท)</th>
+            <th>งบแผน (บาท)</th>
+            <th>จ่ายจริง (บาท)</th>
+            <th>จัดสรร − แผน (บาท)</th>
+            <th>แผน − จ่ายจริง (บาท)</th>
+            <th>สถานะ</th>
+          </tr>
+        </thead>
+        <tbody>
+          
+          
+          
+          <tr>
+            <td>
+              1
+              
+            </td>
+            <td>36,930</td>
+            <td>36,892</td>
+            <td>36,192</td>
+            <td>
+              
+                
+                <span class="pos">38</span>
+                
+              
+            </td>
+            <td>
+              
+                
+                <span class="pos">700</span>
+                
+              
+            </td>
+            <td>
+              
+                <span class="status-done">เสร็จแล้ว</span>
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td>
+              2
+              
+            </td>
+            <td>36,930</td>
+            <td>36,904</td>
+            <td>36,104</td>
+            <td>
+              
+                
+                <span class="pos">26</span>
+                
+              
+            </td>
+            <td>
+              
+                
+                <span class="pos">800</span>
+                
+              
+            </td>
+            <td>
+              
+                <span class="status-done">เสร็จแล้ว</span>
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td>
+              3
+              
+            </td>
+            <td>36,930</td>
+            <td>36,920</td>
+            <td>36,120</td>
+            <td>
+              
+                
+                <span class="pos">10</span>
+                
+              
+            </td>
+            <td>
+              
+                
+                <span class="pos">800</span>
+                
+              
+            </td>
+            <td>
+              
+                <span class="status-done">เสร็จแล้ว</span>
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td>
+              4
+              
+            </td>
+            <td>36,930</td>
+            <td>36,896</td>
+            <td>36,196</td>
+            <td>
+              
+                
+                <span class="pos">34</span>
+                
+              
+            </td>
+            <td>
+              
+                
+                <span class="pos">700</span>
+                
+              
+            </td>
+            <td>
+              
+                <span class="status-done">เสร็จแล้ว</span>
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td>
+              5
+              
+            </td>
+            <td>36,930</td>
+            <td>36,428</td>
+            <td>35,728</td>
+            <td>
+              
+                
+                <span class="pos">502</span>
+                
+              
+            </td>
+            <td>
+              
+                
+                <span class="pos">700</span>
+                
+              
+            </td>
+            <td>
+              
+                <span class="status-done">เสร็จแล้ว</span>
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td>
+              6
+              
+            </td>
+            <td>36,930</td>
+            <td>36,840</td>
+            <td>36,140</td>
+            <td>
+              
+                
+                <span class="pos">90</span>
+                
+              
+            </td>
+            <td>
+              
+                
+                <span class="pos">700</span>
+                
+              
+            </td>
+            <td>
+              
+                <span class="status-done">เสร็จแล้ว</span>
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td>
+              7
+              
+            </td>
+            <td>36,930</td>
+            <td>36,864</td>
+            <td>36,164</td>
+            <td>
+              
+                
+                <span class="pos">66</span>
+                
+              
+            </td>
+            <td>
+              
+                
+                <span class="pos">700</span>
+                
+              
+            </td>
+            <td>
+              
+                <span class="status-done">เสร็จแล้ว</span>
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td>
+              8
+              
+            </td>
+            <td>36,930</td>
+            <td>36,868</td>
+            <td>36,168</td>
+            <td>
+              
+                
+                <span class="pos">62</span>
+                
+              
+            </td>
+            <td>
+              
+                
+                <span class="pos">700</span>
+                
+              
+            </td>
+            <td>
+              
+                <span class="status-done">เสร็จแล้ว</span>
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td>
+              9
+              
+            </td>
+            <td>36,930</td>
+            <td>36,908</td>
+            <td>36,108</td>
+            <td>
+              
+                
+                <span class="pos">22</span>
+                
+              
+            </td>
+            <td>
+              
+                
+                <span class="pos">800</span>
+                
+              
+            </td>
+            <td>
+              
+                <span class="status-done">เสร็จแล้ว</span>
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td>
+              10
+              
+            </td>
+            <td>36,930</td>
+            <td>36,796</td>
+            <td>36,096</td>
+            <td>
+              
+                
+                <span class="pos">134</span>
+                
+              
+            </td>
+            <td>
+              
+                
+                <span class="pos">700</span>
+                
+              
+            </td>
+            <td>
+              
+                <span class="status-done">เสร็จแล้ว</span>
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td>
+              11
+              
+            </td>
+            <td>36,930</td>
+            <td>36,884</td>
+            <td>36,084</td>
+            <td>
+              
+                
+                <span class="pos">46</span>
+                
+              
+            </td>
+            <td>
+              
+                
+                <span class="pos">800</span>
+                
+              
+            </td>
+            <td>
+              
+                <span class="status-done">เสร็จแล้ว</span>
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td>
+              12
+              
+            </td>
+            <td>36,930</td>
+            <td>36,928</td>
+            <td>36,228</td>
+            <td>
+              
+                
+                <span class="pos">2</span>
+                
+              
+            </td>
+            <td>
+              
+                
+                <span class="pos">700</span>
+                
+              
+            </td>
+            <td>
+              
+                <span class="status-done">เสร็จแล้ว</span>
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td>
+              13
+              
+            </td>
+            <td>36,930</td>
+            <td>36,740</td>
+            <td>36,040</td>
+            <td>
+              
+                
+                <span class="pos">190</span>
+                
+              
+            </td>
+            <td>
+              
+                
+                <span class="pos">700</span>
+                
+              
+            </td>
+            <td>
+              
+                <span class="status-done">เสร็จแล้ว</span>
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td>
+              14
+              
+            </td>
+            <td>36,930</td>
+            <td>36,840</td>
+            <td>36,040</td>
+            <td>
+              
+                
+                <span class="pos">90</span>
+                
+              
+            </td>
+            <td>
+              
+                
+                <span class="pos">800</span>
+                
+              
+            </td>
+            <td>
+              
+                <span class="status-done">เสร็จแล้ว</span>
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td>
+              15
+              
+            </td>
+            <td>36,930</td>
+            <td>36,666</td>
+            <td>32,450</td>
+            <td>
+              
+                
+                <span class="pos">264</span>
+                
+              
+            </td>
+            <td>
+              
+                
+                <span class="pos">4,216</span>
+                
+              
+            </td>
+            <td>
+              
+                <span class="status-done">เสร็จแล้ว</span>
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td>
+              16
+              
+            </td>
+            <td>36,930</td>
+            <td>36,922</td>
+            <td>33,334</td>
+            <td>
+              
+                
+                <span class="pos">8</span>
+                
+              
+            </td>
+            <td>
+              
+                
+                <span class="pos">3,588</span>
+                
+              
+            </td>
+            <td>
+              
+                <span class="status-done">เสร็จแล้ว</span>
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td>
+              17
+              
+            </td>
+            <td>36,930</td>
+            <td>36,925</td>
+            <td><span class="zero">—</span></td>
+            <td>
+              
+                
+                <span class="pos">5</span>
+                
+              
+            </td>
+            <td>
+              
+                
+                <span class="pos">36,925</span>
+                
+              
+            </td>
+            <td>
+              
+                <span class="status-pending">รอดำเนินการ</span>
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td>
+              18
+              
+            </td>
+            <td>36,930</td>
+            <td>36,868</td>
+            <td><span class="zero">—</span></td>
+            <td>
+              
+                
+                <span class="pos">62</span>
+                
+              
+            </td>
+            <td>
+              
+                
+                <span class="pos">36,868</span>
+                
+              
+            </td>
+            <td>
+              
+                <span class="status-pending">รอดำเนินการ</span>
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td>
+              19
+              
+            </td>
+            <td>36,930</td>
+            <td>36,834</td>
+            <td><span class="zero">—</span></td>
+            <td>
+              
+                
+                <span class="pos">96</span>
+                
+              
+            </td>
+            <td>
+              
+                
+                <span class="pos">36,834</span>
+                
+              
+            </td>
+            <td>
+              
+                <span class="status-pending">รอดำเนินการ</span>
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td>
+              20
+              
+            </td>
+            <td>36,930</td>
+            <td>36,926</td>
+            <td><span class="zero">—</span></td>
+            <td>
+              
+                
+                <span class="pos">4</span>
+                
+              
+            </td>
+            <td>
+              
+                
+                <span class="pos">36,926</span>
+                
+              
+            </td>
+            <td>
+              
+                <span class="status-pending">รอดำเนินการ</span>
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td>
+              21
+              
+            </td>
+            <td>36,930</td>
+            <td>36,926</td>
+            <td><span class="zero">—</span></td>
+            <td>
+              
+                
+                <span class="pos">4</span>
+                
+              
+            </td>
+            <td>
+              
+                
+                <span class="pos">36,926</span>
+                
+              
+            </td>
+            <td>
+              
+                <span class="status-pending">รอดำเนินการ</span>
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td>
+              22
+              
+            </td>
+            <td>36,930</td>
+            <td>36,704</td>
+            <td><span class="zero">—</span></td>
+            <td>
+              
+                
+                <span class="pos">226</span>
+                
+              
+            </td>
+            <td>
+              
+                
+                <span class="pos">36,704</span>
+                
+              
+            </td>
+            <td>
+              
+                <span class="status-pending">รอดำเนินการ</span>
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td>
+              23
+              
+            </td>
+            <td>36,930</td>
+            <td>36,758</td>
+            <td><span class="zero">—</span></td>
+            <td>
+              
+                
+                <span class="pos">172</span>
+                
+              
+            </td>
+            <td>
+              
+                
+                <span class="pos">36,758</span>
+                
+              
+            </td>
+            <td>
+              
+                <span class="status-pending">รอดำเนินการ</span>
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td>
+              24
+              
+            </td>
+            <td>36,930</td>
+            <td><span class="zero">—</span></td>
+            <td><span class="zero">—</span></td>
+            <td>
+              
+                <span class="zero">—</span>
+              
+            </td>
+            <td>
+              
+                <span class="zero">—</span>
+              
+            </td>
+            <td>
+              
+                <span class="status-pending">รอดำเนินการ</span>
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td>
+              25
+              
+            </td>
+            <td>36,930</td>
+            <td><span class="zero">—</span></td>
+            <td><span class="zero">—</span></td>
+            <td>
+              
+                <span class="zero">—</span>
+              
+            </td>
+            <td>
+              
+                <span class="zero">—</span>
+              
+            </td>
+            <td>
+              
+                <span class="status-pending">รอดำเนินการ</span>
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td>
+              26
+              
+            </td>
+            <td>36,930</td>
+            <td><span class="zero">—</span></td>
+            <td><span class="zero">—</span></td>
+            <td>
+              
+                <span class="zero">—</span>
+              
+            </td>
+            <td>
+              
+                <span class="zero">—</span>
+              
+            </td>
+            <td>
+              
+                <span class="status-pending">รอดำเนินการ</span>
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td>
+              27
+              
+            </td>
+            <td>36,930</td>
+            <td><span class="zero">—</span></td>
+            <td><span class="zero">—</span></td>
+            <td>
+              
+                <span class="zero">—</span>
+              
+            </td>
+            <td>
+              
+                <span class="zero">—</span>
+              
+            </td>
+            <td>
+              
+                <span class="status-pending">รอดำเนินการ</span>
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td>
+              28
+              
+            </td>
+            <td>36,930</td>
+            <td><span class="zero">—</span></td>
+            <td><span class="zero">—</span></td>
+            <td>
+              
+                <span class="zero">—</span>
+              
+            </td>
+            <td>
+              
+                <span class="zero">—</span>
+              
+            </td>
+            <td>
+              
+                <span class="status-pending">รอดำเนินการ</span>
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td>
+              29
+              
+            </td>
+            <td>36,930</td>
+            <td><span class="zero">—</span></td>
+            <td><span class="zero">—</span></td>
+            <td>
+              
+                <span class="zero">—</span>
+              
+            </td>
+            <td>
+              
+                <span class="zero">—</span>
+              
+            </td>
+            <td>
+              
+                <span class="status-pending">รอดำเนินการ</span>
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td>
+              30
+              
+            </td>
+            <td>36,930</td>
+            <td><span class="zero">—</span></td>
+            <td><span class="zero">—</span></td>
+            <td>
+              
+                <span class="zero">—</span>
+              
+            </td>
+            <td>
+              
+                <span class="zero">—</span>
+              
+            </td>
+            <td>
+              
+                <span class="status-pending">รอดำเนินการ</span>
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td>
+              31
+              
+            </td>
+            <td>36,930</td>
+            <td><span class="zero">—</span></td>
+            <td><span class="zero">—</span></td>
+            <td>
+              
+                <span class="zero">—</span>
+              
+            </td>
+            <td>
+              
+                <span class="zero">—</span>
+              
+            </td>
+            <td>
+              
+                <span class="status-pending">รอดำเนินการ</span>
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td>
+              32
+              
+            </td>
+            <td>36,930</td>
+            <td><span class="zero">—</span></td>
+            <td><span class="zero">—</span></td>
+            <td>
+              
+                <span class="zero">—</span>
+              
+            </td>
+            <td>
+              
+                <span class="zero">—</span>
+              
+            </td>
+            <td>
+              
+                <span class="status-pending">รอดำเนินการ</span>
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td>
+              33
+              
+            </td>
+            <td>36,930</td>
+            <td><span class="zero">—</span></td>
+            <td><span class="zero">—</span></td>
+            <td>
+              
+                <span class="zero">—</span>
+              
+            </td>
+            <td>
+              
+                <span class="zero">—</span>
+              
+            </td>
+            <td>
+              
+                <span class="status-pending">รอดำเนินการ</span>
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td>
+              34
+              
+            </td>
+            <td>36,930</td>
+            <td><span class="zero">—</span></td>
+            <td><span class="zero">—</span></td>
+            <td>
+              
+                <span class="zero">—</span>
+              
+            </td>
+            <td>
+              
+                <span class="zero">—</span>
+              
+            </td>
+            <td>
+              
+                <span class="status-pending">รอดำเนินการ</span>
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td>
+              35
+              
+            </td>
+            <td>36,930</td>
+            <td><span class="zero">—</span></td>
+            <td><span class="zero">—</span></td>
+            <td>
+              
+                <span class="zero">—</span>
+              
+            </td>
+            <td>
+              
+                <span class="zero">—</span>
+              
+            </td>
+            <td>
+              
+                <span class="status-pending">รอดำเนินการ</span>
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td>
+              36
+              
+            </td>
+            <td>36,930</td>
+            <td><span class="zero">—</span></td>
+            <td><span class="zero">—</span></td>
+            <td>
+              
+                <span class="zero">—</span>
+              
+            </td>
+            <td>
+              
+                <span class="zero">—</span>
+              
+            </td>
+            <td>
+              
+                <span class="status-pending">รอดำเนินการ</span>
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td>
+              37
+              
+            </td>
+            <td>36,930</td>
+            <td><span class="zero">—</span></td>
+            <td><span class="zero">—</span></td>
+            <td>
+              
+                <span class="zero">—</span>
+              
+            </td>
+            <td>
+              
+                <span class="zero">—</span>
+              
+            </td>
+            <td>
+              
+                <span class="status-pending">รอดำเนินการ</span>
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td>
+              38
+              
+            </td>
+            <td>36,930</td>
+            <td><span class="zero">—</span></td>
+            <td><span class="zero">—</span></td>
+            <td>
+              
+                <span class="zero">—</span>
+              
+            </td>
+            <td>
+              
+                <span class="zero">—</span>
+              
+            </td>
+            <td>
+              
+                <span class="status-pending">รอดำเนินการ</span>
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td>
+              39
+              
+            </td>
+            <td>36,930</td>
+            <td><span class="zero">—</span></td>
+            <td><span class="zero">—</span></td>
+            <td>
+              
+                <span class="zero">—</span>
+              
+            </td>
+            <td>
+              
+                <span class="zero">—</span>
+              
+            </td>
+            <td>
+              
+                <span class="status-pending">รอดำเนินการ</span>
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td>
+              40
+              
+            </td>
+            <td>36,930</td>
+            <td><span class="zero">—</span></td>
+            <td><span class="zero">—</span></td>
+            <td>
+              
+                <span class="zero">—</span>
+              
+            </td>
+            <td>
+              
+                <span class="zero">—</span>
+              
+            </td>
+            <td>
+              
+                <span class="status-pending">รอดำเนินการ</span>
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td>
+              41
+              
+            </td>
+            <td>36,930</td>
+            <td><span class="zero">—</span></td>
+            <td><span class="zero">—</span></td>
+            <td>
+              
+                <span class="zero">—</span>
+              
+            </td>
+            <td>
+              
+                <span class="zero">—</span>
+              
+            </td>
+            <td>
+              
+                <span class="status-pending">รอดำเนินการ</span>
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td>
+              42
+              
+            </td>
+            <td>36,930</td>
+            <td><span class="zero">—</span></td>
+            <td><span class="zero">—</span></td>
+            <td>
+              
+                <span class="zero">—</span>
+              
+            </td>
+            <td>
+              
+                <span class="zero">—</span>
+              
+            </td>
+            <td>
+              
+                <span class="status-pending">รอดำเนินการ</span>
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td>
+              43
+              
+            </td>
+            <td>36,930</td>
+            <td><span class="zero">—</span></td>
+            <td><span class="zero">—</span></td>
+            <td>
+              
+                <span class="zero">—</span>
+              
+            </td>
+            <td>
+              
+                <span class="zero">—</span>
+              
+            </td>
+            <td>
+              
+                <span class="status-pending">รอดำเนินการ</span>
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td>
+              44
+              
+            </td>
+            <td>36,930</td>
+            <td><span class="zero">—</span></td>
+            <td><span class="zero">—</span></td>
+            <td>
+              
+                <span class="zero">—</span>
+              
+            </td>
+            <td>
+              
+                <span class="zero">—</span>
+              
+            </td>
+            <td>
+              
+                <span class="status-pending">รอดำเนินการ</span>
+              
+            </td>
+          </tr>
+          
+        </tbody>
+        <tfoot>
+          <tr style="border-top:2px solid var(--border);background:var(--surface2);">
+            <td colspan="4" style="text-align:right;padding:8px 14px;font-size:12px;color:var(--muted);font-family:'Sarabun',sans-serif;font-weight:600;">
+              รวมส่วนต่าง จัดสรร − แผน (ยอดส่งคืน)
+            </td>
+            <td style="padding:8px 14px;font-family:'IBM Plex Mono',monospace;font-size:14px;font-weight:600;">
+              <span class="pos">2,153</span>
+              
+            </td>
+            <td colspan="2"></td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+
+    <!-- return -->
+    <div class="return-box">
+      <div class="return-label">งบประมาณที่ต้องคืน (งานที่ 3)</div>
+      <div class="return-value">1,053,728 <span style="font-size:13px;font-weight:400">บาท</span></div>
+    </div>
+
+  </div>
+  
+  
+  
+
+  <div class="work-card">
+
+    <!-- header -->
+    <div class="work-header">
+      <div class="work-meta">
+        <div class="work-no-badge">งานที่ 4</div>
+        <div class="work-name">งานการเสริมสร้างความมั่นคงด้านสิ่งแวดล้อม</div>
+        <div class="activity-name">กิจกรรมติดตามและตรวจสอบการแก้ไขปัญหาความมั่นคงด้านสิ่งแวดล้อม</div>
+      </div>
+      <div class="work-stats">
+        <div class="stat">
+          <div class="stat-label">งบจัดสรร</div>
+          <div class="stat-value gold">164,220</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">เบิกจ่ายแล้ว</div>
+          <div class="stat-value green">0</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">วัสดุ</div>
+          <div class="stat-value blue">13,970</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">ครั้งที่ดำเนินการ</div>
+          <div class="stat-value">0/5</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- progress -->
+    <div class="progress-wrap">
+      <div class="progress-labels">
+        <span>ความคืบหน้าการเดินทาง</span>
+        <span>0%</span>
+      </div>
+      <div class="progress-bar-bg">
+        <div class="progress-bar-fill" style="width: 0.0%"></div>
+      </div>
+    </div>
+
+    <!-- trip table -->
+    <div class="trip-table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>ครั้งที่</th>
+            <th>งบจัดสรรต่อครั้ง (บาท)</th>
+            <th>งบแผน (บาท)</th>
+            <th>จ่ายจริง (บาท)</th>
+            <th>จัดสรร − แผน (บาท)</th>
+            <th>แผน − จ่ายจริง (บาท)</th>
+            <th>สถานะ</th>
+          </tr>
+        </thead>
+        <tbody>
+          
+          
+          
+          <tr>
+            <td>
+              1
+              
+            </td>
+            <td>30,050</td>
+            <td>29,934</td>
+            <td><span class="zero">—</span></td>
+            <td>
+              
+                
+                <span class="pos">116</span>
+                
+              
+            </td>
+            <td>
+              
+                
+                <span class="pos">29,934</span>
+                
+              
+            </td>
+            <td>
+              
+                <span class="status-pending">รอดำเนินการ</span>
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td>
+              2
+              
+            </td>
+            <td>30,050</td>
+            <td>30,030</td>
+            <td><span class="zero">—</span></td>
+            <td>
+              
+                
+                <span class="pos">20</span>
+                
+              
+            </td>
+            <td>
+              
+                
+                <span class="pos">30,030</span>
+                
+              
+            </td>
+            <td>
+              
+                <span class="status-pending">รอดำเนินการ</span>
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td>
+              3
+              
+            </td>
+            <td>30,050</td>
+            <td>30,048</td>
+            <td><span class="zero">—</span></td>
+            <td>
+              
+                
+                <span class="pos">2</span>
+                
+              
+            </td>
+            <td>
+              
+                
+                <span class="pos">30,048</span>
+                
+              
+            </td>
+            <td>
+              
+                <span class="status-pending">รอดำเนินการ</span>
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td>
+              4
+              
+            </td>
+            <td>30,050</td>
+            <td><span class="zero">—</span></td>
+            <td><span class="zero">—</span></td>
+            <td>
+              
+                <span class="zero">—</span>
+              
+            </td>
+            <td>
+              
+                <span class="zero">—</span>
+              
+            </td>
+            <td>
+              
+                <span class="status-pending">รอดำเนินการ</span>
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td>
+              5
+              
+            </td>
+            <td>30,050</td>
+            <td><span class="zero">—</span></td>
+            <td><span class="zero">—</span></td>
+            <td>
+              
+                <span class="zero">—</span>
+              
+            </td>
+            <td>
+              
+                <span class="zero">—</span>
+              
+            </td>
+            <td>
+              
+                <span class="status-pending">รอดำเนินการ</span>
+              
+            </td>
+          </tr>
+          
+        </tbody>
+        <tfoot>
+          <tr style="border-top:2px solid var(--border);background:var(--surface2);">
+            <td colspan="4" style="text-align:right;padding:8px 14px;font-size:12px;color:var(--muted);font-family:'Sarabun',sans-serif;font-weight:600;">
+              รวมส่วนต่าง จัดสรร − แผน (ยอดส่งคืน)
+            </td>
+            <td style="padding:8px 14px;font-family:'IBM Plex Mono',monospace;font-size:14px;font-weight:600;">
+              <span class="pos">138</span>
+              
+            </td>
+            <td colspan="2"></td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+
+    <!-- return -->
+    <div class="return-box">
+      <div class="return-label">งบประมาณที่ต้องคืน (งานที่ 4)</div>
+      <div class="return-value">150,250 <span style="font-size:13px;font-weight:400">บาท</span></div>
+    </div>
+
+  </div>
+  
+  
+  
+
+  <div class="work-card">
+
+    <!-- header -->
+    <div class="work-header">
+      <div class="work-meta">
+        <div class="work-no-badge">งานที่ 5</div>
+        <div class="work-name">งานการแก้ไขปัญหาไฟป่าหมอกควันและฝุ่นละอองPM2.5ด้วยกลไกความมั่นคง</div>
+        <div class="activity-name">กิจกรรมจัดชุดบูรณาการและขับเคลื่อน</div>
+      </div>
+      <div class="work-stats">
+        <div class="stat">
+          <div class="stat-label">งบจัดสรร</div>
+          <div class="stat-value gold">142,500</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">เบิกจ่ายแล้ว</div>
+          <div class="stat-value green">0</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">วัสดุ</div>
+          <div class="stat-value blue">9,250</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">ครั้งที่ดำเนินการ</div>
+          <div class="stat-value">0/5</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- progress -->
+    <div class="progress-wrap">
+      <div class="progress-labels">
+        <span>ความคืบหน้าการเดินทาง</span>
+        <span>0%</span>
+      </div>
+      <div class="progress-bar-bg">
+        <div class="progress-bar-fill" style="width: 0.0%"></div>
+      </div>
+    </div>
+
+    <!-- trip table -->
+    <div class="trip-table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>ครั้งที่</th>
+            <th>งบจัดสรรต่อครั้ง (บาท)</th>
+            <th>งบแผน (บาท)</th>
+            <th>จ่ายจริง (บาท)</th>
+            <th>จัดสรร − แผน (บาท)</th>
+            <th>แผน − จ่ายจริง (บาท)</th>
+            <th>สถานะ</th>
+          </tr>
+        </thead>
+        <tbody>
+          
+          
+          
+          <tr>
+            <td>
+              1
+              
+            </td>
+            <td>26,650</td>
+            <td>26,648</td>
+            <td><span class="zero">—</span></td>
+            <td>
+              
+                
+                <span class="pos">2</span>
+                
+              
+            </td>
+            <td>
+              
+                
+                <span class="pos">26,648</span>
+                
+              
+            </td>
+            <td>
+              
+                <span class="status-pending">รอดำเนินการ</span>
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td>
+              2
+              
+            </td>
+            <td>26,650</td>
+            <td>26,642</td>
+            <td><span class="zero">—</span></td>
+            <td>
+              
+                
+                <span class="pos">8</span>
+                
+              
+            </td>
+            <td>
+              
+                
+                <span class="pos">26,642</span>
+                
+              
+            </td>
+            <td>
+              
+                <span class="status-pending">รอดำเนินการ</span>
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td>
+              3
+              
+            </td>
+            <td>26,650</td>
+            <td>26,587</td>
+            <td><span class="zero">—</span></td>
+            <td>
+              
+                
+                <span class="pos">63</span>
+                
+              
+            </td>
+            <td>
+              
+                
+                <span class="pos">26,587</span>
+                
+              
+            </td>
+            <td>
+              
+                <span class="status-pending">รอดำเนินการ</span>
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td>
+              4
+              
+            </td>
+            <td>26,650</td>
+            <td>26,603</td>
+            <td><span class="zero">—</span></td>
+            <td>
+              
+                
+                <span class="pos">47</span>
+                
+              
+            </td>
+            <td>
+              
+                
+                <span class="pos">26,603</span>
+                
+              
+            </td>
+            <td>
+              
+                <span class="status-pending">รอดำเนินการ</span>
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td>
+              5
+              
+            </td>
+            <td>26,650</td>
+            <td>26,642</td>
+            <td><span class="zero">—</span></td>
+            <td>
+              
+                
+                <span class="pos">8</span>
+                
+              
+            </td>
+            <td>
+              
+                
+                <span class="pos">26,642</span>
+                
+              
+            </td>
+            <td>
+              
+                <span class="status-pending">รอดำเนินการ</span>
+              
+            </td>
+          </tr>
+          
+        </tbody>
+        <tfoot>
+          <tr style="border-top:2px solid var(--border);background:var(--surface2);">
+            <td colspan="4" style="text-align:right;padding:8px 14px;font-size:12px;color:var(--muted);font-family:'Sarabun',sans-serif;font-weight:600;">
+              รวมส่วนต่าง จัดสรร − แผน (ยอดส่งคืน)
+            </td>
+            <td style="padding:8px 14px;font-family:'IBM Plex Mono',monospace;font-size:14px;font-weight:600;">
+              <span class="pos">128</span>
+              
+            </td>
+            <td colspan="2"></td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+
+    <!-- return -->
+    <div class="return-box">
+      <div class="return-label">งบประมาณที่ต้องคืน (งานที่ 5)</div>
+      <div class="return-value">133,250 <span style="font-size:13px;font-weight:400">บาท</span></div>
+    </div>
+
+  </div>
+  
+  
+  
+
+  <div class="work-card">
+
+    <!-- header -->
+    <div class="work-header">
+      <div class="work-meta">
+        <div class="work-no-badge">งานที่ 6</div>
+        <div class="work-name">งานการเสริมสร้างความมั่นคงด้านพลังงานและอาหาร</div>
+        <div class="activity-name">กิจกรรมจัดชุดติดตามและขับเคลื่อน</div>
+      </div>
+      <div class="work-stats">
+        <div class="stat">
+          <div class="stat-label">งบจัดสรร</div>
+          <div class="stat-value gold">167,750</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">เบิกจ่ายแล้ว</div>
+          <div class="stat-value green">0</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">วัสดุ</div>
+          <div class="stat-value blue">8,930</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">ครั้งที่ดำเนินการ</div>
+          <div class="stat-value">0/6</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- progress -->
+    <div class="progress-wrap">
+      <div class="progress-labels">
+        <span>ความคืบหน้าการเดินทาง</span>
+        <span>0%</span>
+      </div>
+      <div class="progress-bar-bg">
+        <div class="progress-bar-fill" style="width: 0.0%"></div>
+      </div>
+    </div>
+
+    <!-- trip table -->
+    <div class="trip-table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>ครั้งที่</th>
+            <th>งบจัดสรรต่อครั้ง (บาท)</th>
+            <th>งบแผน (บาท)</th>
+            <th>จ่ายจริง (บาท)</th>
+            <th>จัดสรร − แผน (บาท)</th>
+            <th>แผน − จ่ายจริง (บาท)</th>
+            <th>สถานะ</th>
+          </tr>
+        </thead>
+        <tbody>
+          
+          
+          
+          <tr>
+            <td>
+              1
+              
+            </td>
+            <td>26,470</td>
+            <td><span class="zero">—</span></td>
+            <td><span class="zero">—</span></td>
+            <td>
+              
+                <span class="zero">—</span>
+              
+            </td>
+            <td>
+              
+                <span class="zero">—</span>
+              
+            </td>
+            <td>
+              
+                <span class="status-pending">รอดำเนินการ</span>
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td>
+              2
+              
+            </td>
+            <td>26,470</td>
+            <td><span class="zero">—</span></td>
+            <td><span class="zero">—</span></td>
+            <td>
+              
+                <span class="zero">—</span>
+              
+            </td>
+            <td>
+              
+                <span class="zero">—</span>
+              
+            </td>
+            <td>
+              
+                <span class="status-pending">รอดำเนินการ</span>
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td>
+              3
+              
+            </td>
+            <td>26,470</td>
+            <td><span class="zero">—</span></td>
+            <td><span class="zero">—</span></td>
+            <td>
+              
+                <span class="zero">—</span>
+              
+            </td>
+            <td>
+              
+                <span class="zero">—</span>
+              
+            </td>
+            <td>
+              
+                <span class="status-pending">รอดำเนินการ</span>
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td>
+              4
+              
+            </td>
+            <td>26,470</td>
+            <td><span class="zero">—</span></td>
+            <td><span class="zero">—</span></td>
+            <td>
+              
+                <span class="zero">—</span>
+              
+            </td>
+            <td>
+              
+                <span class="zero">—</span>
+              
+            </td>
+            <td>
+              
+                <span class="status-pending">รอดำเนินการ</span>
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td>
+              5
+              
+            </td>
+            <td>26,470</td>
+            <td><span class="zero">—</span></td>
+            <td><span class="zero">—</span></td>
+            <td>
+              
+                <span class="zero">—</span>
+              
+            </td>
+            <td>
+              
+                <span class="zero">—</span>
+              
+            </td>
+            <td>
+              
+                <span class="status-pending">รอดำเนินการ</span>
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td>
+              6
+              
+            </td>
+            <td>26,470</td>
+            <td><span class="zero">—</span></td>
+            <td><span class="zero">—</span></td>
+            <td>
+              
+                <span class="zero">—</span>
+              
+            </td>
+            <td>
+              
+                <span class="zero">—</span>
+              
+            </td>
+            <td>
+              
+                <span class="status-pending">รอดำเนินการ</span>
+              
+            </td>
+          </tr>
+          
+        </tbody>
+        <tfoot>
+          <tr style="border-top:2px solid var(--border);background:var(--surface2);">
+            <td colspan="4" style="text-align:right;padding:8px 14px;font-size:12px;color:var(--muted);font-family:'Sarabun',sans-serif;font-weight:600;">
+              รวมส่วนต่าง จัดสรร − แผน (ยอดส่งคืน)
+            </td>
+            <td style="padding:8px 14px;font-family:'IBM Plex Mono',monospace;font-size:14px;font-weight:600;">
+              0
+            </td>
+            <td colspan="2"></td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+
+    <!-- return -->
+    <div class="return-box">
+      <div class="return-label">งบประมาณที่ต้องคืน (งานที่ 6)</div>
+      <div class="return-value">158,820 <span style="font-size:13px;font-weight:400">บาท</span></div>
+    </div>
+
+  </div>
+  
+</div>
+
+<!-- GRAND RETURN -->
+<div class="grand-return">
+  <div>
+    <div class="grand-return-label">งบประมาณรวมทั้งหมดที่ต้อง<span>คืนคลัง</span></div>
+    <div style="font-size:12px;color:var(--muted);margin-top:4px">
+      คำนวณจาก: งบจัดสรร − เบิกจ่ายจริง − งบวัสดุ
+    </div>
+  </div>
+  <div>
+    <span class="grand-return-value">2,476,764</span>
+    <span class="grand-return-unit">บาท</span>
+  </div>
+</div>
+
+<div class="footer">สร้างอัตโนมัติจาก budget.db — ศปป.4 กอ.รมน. ปีงบประมาณ 2569</div>
+
+</body>
+</html>
